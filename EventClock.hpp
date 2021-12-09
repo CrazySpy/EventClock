@@ -14,10 +14,10 @@ namespace TimeTicks {
     using Nanoseconds = std::chrono::nanoseconds;
 };
 
-template<typename TimeTicksType>
+template<typename TimeTicksType, typename KeyType=std::string>
 class EventClock {
 public:
-    using EventType = std::string;
+    using EventType = KeyType;
     struct EventStatus {
         bool isRecording = false;
         std::chrono::time_point<std::chrono::steady_clock> startTime;
@@ -25,8 +25,8 @@ public:
     };
 
 private:
-    std::unordered_map<EventType, unsigned int> _eventAccumulateDuration;
-    std::unordered_map<EventType, EventStatus> _eventStatus;
+    std::map<EventType, unsigned int> _eventAccumulateDuration;
+    std::map<EventType, EventStatus> _eventStatus;
 
     std::string _getAbbreviation(TimeTicks::Hour);
     std::string _getAbbreviation(TimeTicks::Minute);
@@ -43,12 +43,12 @@ public:
 };
 
 
-template<typename TimeTicksType>
-void EventClock<TimeTicksType>::startClock(const EventClock::EventType &event) {
+template<typename TimeTicksType, typename KeyType>
+void EventClock<TimeTicksType, KeyType>::startClock(const EventClock::EventType &event) {
     EventStatus &eventStatus = _eventStatus[event];
 
     if(eventStatus.isRecording) {
-        std::cerr << event << " is recoding." << std::endl;
+        std::cerr << "Event is recoding." << std::endl;
         return;
     }
 
@@ -56,12 +56,12 @@ void EventClock<TimeTicksType>::startClock(const EventClock::EventType &event) {
     eventStatus.startTime = std::chrono::steady_clock::now();
 }
 
-template<typename TimeTicksType>
-void EventClock<TimeTicksType>::stopClock(const EventClock::EventType &event) {
+template<typename TimeTicksType, typename KeyType>
+void EventClock<TimeTicksType, KeyType>::stopClock(const EventClock::EventType &event) {
     EventStatus &eventStatus = _eventStatus[event];
 
     if(!eventStatus.isRecording) {
-        std::cerr << event << " is not recoding." << std::endl;
+        std::cerr << "Event is not recoding." << std::endl;
         return;
     }
 
@@ -70,47 +70,47 @@ void EventClock<TimeTicksType>::stopClock(const EventClock::EventType &event) {
     eventStatus.isRecording = false;
 }
 
-template<typename TimeTicksType>
-TimeTicksType EventClock<TimeTicksType>::getEventDuration(const EventClock::EventType &event) {
+template<typename TimeTicksType, typename KeyType>
+TimeTicksType EventClock<TimeTicksType, KeyType>::getEventDuration(const EventClock::EventType &event) {
     EventStatus &eventStatus = _eventStatus[event];
 
     if(eventStatus.isRecording) {
-        std::cerr << event << " is recoding." << std::endl;
+        std::cerr << "Event is recoding." << std::endl;
         return -1;
     }
 
     return eventStatus.accumulateDuration;
 }
 
-template<typename TimeTicksType>
-void EventClock<TimeTicksType>::printEvent(const EventClock::EventType &event, std::ostream &os) {
-    os << "The accumulate time of event \"" << event << "\" is "
+template<typename TimeTicksType, typename KeyType>
+void EventClock<TimeTicksType, KeyType>::printEvent(const EventClock::EventType &event, std::ostream &os) {
+    os << "The accumulate time is: "
        << _eventStatus[event].accumulateDuration.count() << ' ' << _getAbbreviation(TimeTicksType()) << "(s)"
        << std::endl;
 }
 
-template<typename TimeTicksType>
-std::string EventClock<TimeTicksType>::_getAbbreviation(TimeTicks::Hour) {
+template<typename TimeTicksType, typename KeyType>
+std::string EventClock<TimeTicksType, KeyType>::_getAbbreviation(TimeTicks::Hour) {
     return "hour";
 }
 
-template<typename TimeTicksType>
-std::string EventClock<TimeTicksType>::_getAbbreviation(TimeTicks::Minute) {
+template<typename TimeTicksType, typename KeyType>
+std::string EventClock<TimeTicksType, KeyType>::_getAbbreviation(TimeTicks::Minute) {
     return "min";
 }
 
-template<typename TimeTicksType>
-std::string EventClock<TimeTicksType>::_getAbbreviation(TimeTicks::Seconds) {
+template<typename TimeTicksType, typename KeyType>
+std::string EventClock<TimeTicksType, KeyType>::_getAbbreviation(TimeTicks::Seconds) {
     return "second";
 }
 
-template<typename TimeTicksType>
-std::string EventClock<TimeTicksType>::_getAbbreviation(TimeTicks::Microseconds) {
+template<typename TimeTicksType, typename KeyType>
+std::string EventClock<TimeTicksType, KeyType>::_getAbbreviation(TimeTicks::Microseconds) {
     return "microsecond";
 }
 
-template<typename TimeTicksType>
-std::string EventClock<TimeTicksType>::_getAbbreviation(TimeTicks::Nanoseconds) {
+template<typename TimeTicksType, typename KeyType>
+std::string EventClock<TimeTicksType, KeyType>::_getAbbreviation(TimeTicks::Nanoseconds) {
     return "nanosecond";
 }
 
