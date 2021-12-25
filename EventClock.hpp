@@ -2,9 +2,9 @@
 #define EVENTCLOCK_EVENTCLOCK_H
 
 #include <iostream>
-#include <unordered_map>
 #include <string>
 #include <chrono>
+#include <map>
 
 namespace TimeTicks {
     using Hour = std::chrono::hours;
