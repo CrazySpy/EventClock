@@ -76,7 +76,7 @@ TimeTicksType EventClock<TimeTicksType, KeyType>::getEventDuration(const EventCl
 
     if(eventStatus.isRecording) {
         std::cerr << "Event is recoding." << std::endl;
-        return -1;
+        return TimeTicksType(-1);
     }
 
     return eventStatus.accumulateDuration;

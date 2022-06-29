@@ -1,4 +1,4 @@
-#include "EventClock.h"
+#include "EventClock.hpp"
 using namespace std;
 
 int main() {
